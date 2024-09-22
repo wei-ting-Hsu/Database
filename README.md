@@ -7,6 +7,6 @@
 
 # 作業連結區
 hw1:https://github.com/wei-ting-Hsu/Database/blob/main/create.py<br/>
-hw1 youtube:https://youtu.be/YWKgU61-H5I
+hw1 youtube:https://youtu.be/EKHk9YFYJ9s
 
 # 專題連結區
