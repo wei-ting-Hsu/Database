@@ -6,7 +6,7 @@
 # 課程筆記區
 
 # 作業連結區
-hw1:https://github.com/wei-ting-Hsu/Database/blob/main/create.py
-hw1 youtube:
+hw1:https://github.com/wei-ting-Hsu/Database/blob/main/create.py<br/>
+hw1 youtube:https://youtu.be/YWKgU61-H5I
 
 # 專題連結區
