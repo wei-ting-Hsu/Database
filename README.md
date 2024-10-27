@@ -7,6 +7,7 @@
 
 # 作業連結區
 hw1:[https://github.com/wei-ting-Hsu/Database/blob/main/create.py](https://github.com/wei-ting-Hsu/Database/tree/main/hw1)<br/>
-hw1 youtube:https://youtu.be/EKHk9YFYJ9s
-
+hw1: youtube:https://youtu.be/EKHk9YFYJ9s
+hw2:
+ER diagram
 # 專題連結區
