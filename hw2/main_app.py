@@ -1,183 +1,216 @@
-import mysql.connector
-from mysql.connector import Error
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template_string, request, redirect, url_for
+import MySQLdb
 
-# 獲取資料表中的所有資料
-def get_data(table_name):
-    try:
-        connection = mysql.connector.connect(
-            host="127.0.0.1",  # 修改為正確的主機
-            user="root",
-            password="",
-            database="employeesystem",
-            port=3306  # 使用正確的端口
-        )
-        if connection.is_connected():
-            print(f"成功連接到資料庫: {table_name}")
-        cursor = connection.cursor(dictionary=True)
-        query = f"SELECT * FROM {table_name}"
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        print(f"成功獲取資料: {rows}")  # 顯示獲取到的資料
-        return rows
-    except Error as e:
-        print(f"資料庫連接錯誤: {e}")
-        return []
-    finally:
-        if 'connection' in locals() and connection.is_connected():
-            cursor.close()
-            connection.close()
-            print("資料庫連接已關閉")
+app = Flask(__name__)  # 確保這行在最頂部
 
-# 插入資料到指定的表
-def insert_data(table_name, id, value):
-    try:
-        connection = mysql.connector.connect(
-            host="127.0.0.1",  # 修改為正確的主機
-            user="root",
-            password="",
-            database="employeesystem",
-            port=3306
-        )
-        if connection.is_connected():
-            print(f"成功連接到資料庫: {table_name}")
-        cursor = connection.cursor()
-        if table_name == 'teacher':
-            sql = "INSERT INTO teacher (id, teacher_name) VALUES (%s, %s)"
-        elif table_name == 'subject':
-            sql = "INSERT INTO subject (id, subject_name) VALUES (%s, %s)"
-        else:
-            sql = "INSERT INTO country (id, country_name) VALUES (%s, %s)"
-        cursor.execute(sql, (id, value))
-        connection.commit()
-        print(f"成功插入資料: {id}, {value}")
-    except Error as e:
-        print(f"插入錯誤: {e}")
-    finally:
-        if 'connection' in locals() and connection.is_connected():
-            cursor.close()
-            connection.close()
-            print("資料庫連接已關閉")
+# 配置 MySQL 数据库连接
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'jason930520'
+app.config['MYSQL_DB'] = 'employeesystem'
 
-# 從指定的表中刪除資料
-def delete_data(table_name, id):
-    try:
-        connection = mysql.connector.connect(
-            host="127.0.0.1",  # 修改為正確的主機
-            user="root",
-            password="",
-            database="employeesystem",
-            port=3306
-        )
-        if connection.is_connected():
-            print(f"成功連接到資料庫: {table_name}")
-        cursor = connection.cursor()
-        sql = f"DELETE FROM {table_name} WHERE id = %s"
-        cursor.execute(sql, (id,))
-        connection.commit()
-        print(f"成功刪除資料: {id}")
-    except Error as e:
-        print(f"刪除錯誤: {e}")
-    finally:
-        if 'connection' in locals() and connection.is_connected():
-            cursor.close()
-            connection.close()
-            print("資料庫連接已關閉")
+# 初始化 MySQL 连接
+def get_db_connection():
+    return MySQLdb.connect(
+        host=app.config['MYSQL_HOST'],
+        user=app.config['MYSQL_USER'],
+        password=app.config['MYSQL_PASSWORD'],
+        database=app.config['MYSQL_DB']
+    )
 
-# 連接三個表並查詢
-def join_tables():
-    try:
-        connection = mysql.connector.connect(
-            host="127.0.0.1",  # 修改為正確的主機
-            user="root",
-            password="",
-            database="employeesystem",
-            port=3306
-        )
-        if connection.is_connected():
-            print("成功連接到資料庫: join")
-        cursor = connection.cursor(dictionary=True)
-        query = """
-        SELECT teacher.id, teacher.teacher_name, subject.subject_name, country.country_name
-        FROM teacher
-        JOIN subject ON teacher.id = subject.id
-        JOIN country ON teacher.id = country.id
-        """
-        cursor.execute(query)
-        rows = cursor.fetchall()
-        print(f"成功獲取連接查詢資料: {rows}")  # 顯示獲取到的資料
-        return rows
-    except Error as e:
-        print(f"連接查詢錯誤: {e}")
-        return []
-    finally:
-        if 'connection' in locals() and connection.is_connected():
-            cursor.close()
-            connection.close()
-            print("資料庫連接已關閉")
-
-# 更新指定表中的資料
-def update_data(table_name, id, value):
-    try:
-        connection = mysql.connector.connect(
-            host="127.0.0.1",  # 修改為正確的主機
-            user="root",
-            password="",
-            database="employeesystem",
-            port=3306
-        )
-        if connection.is_connected():
-            print(f"成功連接到資料庫: {table_name}")
-        cursor = connection.cursor()
-        if table_name == 'teacher':
-            sql = "UPDATE teacher SET teacher_name = %s WHERE id = %s"
-        elif table_name == 'subject':
-            sql = "UPDATE subject SET subject_name = %s WHERE id = %s"
-        else:
-            sql = "UPDATE country SET country_name = %s WHERE id = %s"
-        cursor.execute(sql, (value, id))
-        connection.commit()
-        print(f"成功更新資料: {id}, {value}")
-    except Error as e:
-        print(f"更新錯誤: {e}")
-    finally:
-        if 'connection' in locals() and connection.is_connected():
-            cursor.close()
-            connection.close()
-            print("資料庫連接已關閉")
-
-app = Flask(__name__)
-
-# 路由設定
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    teachers = get_data("teacher")
-    subjects = get_data("subject")
-    countries = get_data("country")
-    return render_template('index.html', teachers=teachers, subjects=subjects, countries=countries)
+    db = get_db_connection()
+    cursor = db.cursor()
+    
+    # 顯示三個表的資料
+    cursor.execute("SELECT * FROM country")
+    country_rows = cursor.fetchall()
+    cursor.execute("SELECT * FROM subject")
+    subject_rows = cursor.fetchall()
+    cursor.execute("SELECT id, teacher_name FROM teacher")
+    teacher_rows = cursor.fetchall()
 
-@app.route('/add', methods=['POST'])
-def add():
-    table_name = request.form['table']
-    id = request.form['id']
-    value = request.form['value']
-    insert_data(table_name, id, value)
-    return redirect(url_for('index'))
+    # 如果是 POST 請求，則處理添加資料的表單
+    if request.method == 'POST':
+        table = request.form['table']
+        new_id = request.form['new_id']
+        new_content = request.form['new_content']
 
-@app.route('/delete/<table>/<int:id>', methods=['POST'])
-def delete(table, id):
-    delete_data(table, id)
-    return redirect(url_for('index'))
+        if table == 'country':
+            cursor.execute("INSERT INTO country (id, country_name) VALUES (%s, %s)", (new_id, new_content))
+        elif table == 'subject':
+            cursor.execute("INSERT INTO subject (id, subject_name) VALUES (%s, %s)", (new_id, new_content))
+        elif table == 'teacher':
+            cursor.execute("INSERT INTO teacher (id, teacher_name) VALUES (%s, %s)", (new_id, new_content))
 
-@app.route('/join')
-def show_join():
-    joined_data = join_tables()  # 獲取 JOIN 查詢結果
-    return render_template('join_results.html', data=joined_data)
+        db.commit()
+        return redirect(url_for('index'))
 
+    # HTML 模板 (使用 Bootstrap 美化)
+    html_template = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Employee System</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Employee System - Data Management</h1>
+        
+        <!-- 表單添加資料 -->
+        <form method="POST" action="/" class="row g-3 mb-5">
+            <div class="col-md-4">
+                <label for="table" class="form-label">Select Table:</label>
+                <select name="table" id="table" class="form-select">
+                    <option value="country">Country</option>
+                    <option value="subject">Subject</option>
+                    <option value="teacher">Teacher</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="new_id" class="form-label">ID:</label>
+                <input type="text" name="new_id" id="new_id" class="form-control" required>
+            </div>
+            <div class="col-md-3">
+                <label for="new_content" class="form-label">Content:</label>
+                <input type="text" name="new_content" id="new_content" class="form-control" required>
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary mt-4">Add Data</button>
+            </div>
+        </form>
+
+        <!-- 顯示 Country 表 -->
+        <h2 class="mt-4">Country Table</h2>
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Country Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for row in country_rows %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>
+                        <form method="POST" action="/update/country/{{ row[0] }}" class="d-flex">
+                            <input type="text" name="new_value" class="form-control" value="{{ row[1] }}">
+                            <button type="submit" class="btn btn-warning btn-sm ms-2">Update</button>
+                        </form>
+                    </td>
+                    <td>
+                        <a href="/delete/country/{{ row[0] }}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- 顯示 Subject 表 -->
+        <h2 class="mt-4">Subject Table</h2>
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Subject Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for row in subject_rows %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>
+                        <form method="POST" action="/update/subject/{{ row[0] }}" class="d-flex">
+                            <input type="text" name="new_value" class="form-control" value="{{ row[1] }}">
+                            <button type="submit" class="btn btn-warning btn-sm ms-2">Update</button>
+                        </form>
+                    </td>
+                    <td>
+                        <a href="/delete/subject/{{ row[0] }}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- 顯示 Teacher 表 -->
+        <h2 class="mt-4">Teacher Table</h2>
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Teacher Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for row in teacher_rows %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>
+                        <form method="POST" action="/update/teacher/{{ row[0] }}" class="d-flex">
+                            <input type="text" name="new_value" class="form-control" value="{{ row[1] }}">
+                            <button type="submit" class="btn btn-warning btn-sm ms-2">Update</button>
+                        </form>
+                    </td>
+                    <td>
+                        <a href="/delete/teacher/{{ row[0] }}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- JOIN 按鈕 -->
+        <form method="POST" action="/join" class="mt-4">
+            <button type="submit" class="btn btn-success">Join Tables</button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
+    """
+
+    return render_template_string(html_template, country_rows=country_rows, subject_rows=subject_rows, teacher_rows=teacher_rows)
+
+# 更新資料
 @app.route('/update/<table>/<int:id>', methods=['POST'])
 def update(table, id):
-    value = request.form['value']
-    update_data(table, id, value)
+    db = get_db_connection()
+    cursor = db.cursor()
+
+    new_value = request.form['new_value']
+    if table == 'country':
+        cursor.execute("UPDATE country SET country_name = %s WHERE id = %s", (new_value, id))
+    elif table == 'subject':
+        cursor.execute("UPDATE subject SET subject_name = %s WHERE id = %s", (new_value, id))
+    elif table == 'teacher':
+        cursor.execute("UPDATE teacher SET teacher_name = %s WHERE id = %s", (new_value, id))
+    db.commit()
+    return redirect(url_for('index'))
+
+# 刪除資料
+@app.route('/delete/<table>/<int:id>', methods=['GET'])
+def delete(table, id):
+    db = get_db_connection()
+    cursor = db.cursor()
+
+    if table == 'country':
+        cursor.execute("DELETE FROM country WHERE id = %s", (id,))
+    elif table == 'subject':
+        cursor.execute("DELETE FROM subject WHERE id = %s", (id,))
+    elif table == 'teacher':
+        cursor.execute("DELETE FROM teacher WHERE id = %s", (id,))
+    
+    db.commit()
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
