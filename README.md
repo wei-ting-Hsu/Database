@@ -9,6 +9,6 @@
 hw1:[https://github.com/wei-ting-Hsu/Database/blob/main/create.py](https://github.com/wei-ting-Hsu/Database/tree/main/hw1)<br/>
 hw1: youtube:https://youtu.be/EKHk9YFYJ9s <br/>
 hw2: https://github.com/wei-ting-Hsu/Database/tree/main/hw2 <br/>
-ER diagram
-![image](picture or gif url)
+ER diagram <br/>
+![image](https://github.com/wei-ting-Hsu/Database/blob/main/ER.png)
 # 專題連結區
