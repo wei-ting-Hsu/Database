@@ -10,4 +10,5 @@ hw1:[https://github.com/wei-ting-Hsu/Database/blob/main/create.py](https://githu
 hw1: youtube:https://youtu.be/EKHk9YFYJ9s <br/>
 hw2: https://github.com/wei-ting-Hsu/Database/tree/main/hw2 <br/>
 ER diagram
+![image](picture or gif url)
 # 專題連結區
