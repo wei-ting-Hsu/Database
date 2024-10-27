@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Country, Subject, and Teacher Management</title>
+</head>
+<body>
+    <h1>Country, Subject, and Teacher Management</h1>
+
+    <!-- Display Countries -->
+    <h2>Countries</h2>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Country Name</th>
+            <th>Actions</th>
+        </tr>
+        {% for country in countries %}
+        <tr>
+            <td>{{ country['id'] }}</td>
+            <td>
+                <form action="{{ url_for('update', table='country', id=country['id']) }}" method="POST">
+                    <input type="text" name="name" value="{{ country['country_name'] }}">
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+            <td>
+                <form action="{{ url_for('delete', table='country', id=country['id']) }}" method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Display Subjects -->
+    <h2>Subjects</h2>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Subject Name</th>
+            <th>Actions</th>
+        </tr>
+        {% for subject in subjects %}
+        <tr>
+            <td>{{ subject['id'] }}</td>
+            <td>
+                <form action="{{ url_for('update', table='subject', id=subject['id']) }}" method="POST">
+                    <input type="text" name="name" value="{{ subject['subject_name'] }}">
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+            <td>
+                <form action="{{ url_for('delete', table='subject', id=subject['id']) }}" method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Display Teachers -->
+    <h2>Teachers</h2>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Teacher Name</th>
+            <th>Actions</th>
+        </tr>
+        {% for teacher in teachers %}
+        <tr>
+            <td>{{ teacher['id'] }}</td>
+            <td>
+                <form action="{{ url_for('update', table='teacher', id=teacher['id']) }}" method="POST">
+                    <input type="text" name="name" value="{{ teacher['teacher_name'] }}">
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+            <td>
+                <form action="{{ url_for('delete', table='teacher', id=teacher['id']) }}" method="POST">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Add New Record Form -->
+    <h2>Add New Record</h2>
+    <form action="{{ url_for('add') }}" method="POST">
+        Table:
+        <select name="table">
+            <option value="country">Country</option>
+            <option value="subject">Subject</option>
+            <option value="teacher">Teacher</option>
+        </select><br>
+        ID: <input type="number" name="id" required><br>
+        Name: <input type="text" name="name" required><br>
+        <button type="submit">Add Record</button>
+    </form>
+</body>
+</html>
