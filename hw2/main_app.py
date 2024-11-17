@@ -181,6 +181,63 @@ def index():
 
     return render_template_string(html_template, country_rows=country_rows, subject_rows=subject_rows, teacher_rows=teacher_rows)
 
+@app.route('/join', methods=['POST'])
+def join_tables():
+    db = get_db_connection()
+    cursor = db.cursor()
+
+    # Join 三個表
+    cursor.execute("""
+        SELECT teacher.id, teacher.teacher_name, country.country_name, subject.subject_name
+        FROM teacher
+        JOIN country ON teacher.id = country.id
+        JOIN subject ON teacher.id = subject.id
+    """)
+    joined_rows = cursor.fetchall()
+
+    # 顯示 JOIN 結果
+    html_template = """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Joined Data</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Joined Data</h1>
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Teacher Name</th>
+                    <th>Country Name</th>
+                    <th>Subject Name</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for row in joined_rows %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        <a href="/" class="btn btn-primary">Back</a>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+    </html>
+    """
+
+    return render_template_string(html_template, joined_rows=joined_rows)
+
 # 更新資料
 @app.route('/update/<table>/<int:id>', methods=['POST'])
 def update(table, id):
