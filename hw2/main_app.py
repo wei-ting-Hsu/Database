@@ -1,15 +1,15 @@
 from flask import Flask, render_template_string, request, redirect, url_for
 import MySQLdb
 
-app = Flask(__name__)  # 確保這行在最頂部
+app = Flask(__name__)  
 
-# 配置 MySQL 数据库连接
+
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'jason930520'
 app.config['MYSQL_DB'] = 'employeesystem'
 
-# 初始化 MySQL 连接
+
 def get_db_connection():
     return MySQLdb.connect(
         host=app.config['MYSQL_HOST'],

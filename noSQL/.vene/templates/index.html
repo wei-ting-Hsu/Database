@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>資料管理</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">資料管理</h1>
+        
+        <!-- 新增資料的表單 -->
+        <form action="/add" method="POST" class="mb-4" id="addForm">
+            <div class="row">
+                <div class="col">
+                    <input type="text" class="form-control" name="country" placeholder="國家" required>
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control" name="occupation" placeholder="職業" required>
+                </div>
+                <div class="col">
+                    <input type="number" class="form-control" name="age" placeholder="年齡" required>
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-success">新增資料</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- 顯示現有資料的表格 -->
+        <table class="table table-bordered table-striped">
+            <thead class="table-success">
+                <tr>
+                    <th>國家</th>
+                    <th>年齡</th>
+                    <th>職業</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="records-table-body">
+                <!-- 資料行將通過 JavaScript 動態加載 -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // 使用 fetch API 從後端獲取所有資料
+        function loadRecords() {
+            fetch('/api/records')
+                .then(response => response.json())
+                .then(data => {
+                    let tableBody = document.getElementById('records-table-body');
+                    tableBody.innerHTML = ''; // 清空表格內容
+                    data.records.forEach(record => {
+                        tableBody.innerHTML += `
+                            <tr>
+                                <form action="/edit/${record._id}" method="POST" onsubmit="setTimeout(loadRecords, 500)">
+                                    <td><input type="text" name="country" value="${record.country}" class="form-control" required></td>
+                                    <td><input type="number" name="age" value="${record.age}" class="form-control" required></td>
+                                    <td><input type="text" name="occupation" value="${record.occupation}" class="form-control" required></td>
+                                    <td>
+                                        <button type="submit" class="btn btn-warning">編輯</button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteRecord('${record._id}')">刪除</button>
+                                    </td>
+                                </form>
+                            </tr>
+                        `;
+                    });
+                });
+        }
+
+        // 刪除資料
+        function deleteRecord(id) {
+            fetch(`/delete/${id}`, {
+                method: 'POST'
+            }).then(() => {
+                loadRecords();
+            });
+        }
+
+        // 當頁面加載完成後加載所有資料
+        document.addEventListener('DOMContentLoaded', loadRecords);
+        
+        // 當新增表單提交後，重新加載資料
+        document.getElementById('addForm').addEventListener('submit', function(event) {
+            setTimeout(() => {
+                loadRecords();
+            }, 500); // 延遲 500ms 以確保伺服器端操作已完成
+        });
+    </script>
+</body>
+</html>
