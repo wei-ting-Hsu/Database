@@ -176,3 +176,30 @@ button:hover {
     gap: 15px;
     margin-top: 20px;
 }
+.create-thread-button {
+    position: fixed; /* Fixes the button relative to the viewport */
+    bottom: 20px; /* Adjusts distance from the bottom of the viewport */
+    right: 20px; /* Adjusts distance from the right of the viewport */
+    width: 60px; /* Sets width to make it circular */
+    height: 60px; /* Sets height to make it circular */
+    background-color: #007bff; /* Blue background color */
+    color: white; /* White text */
+    border: none; /* No border */
+    border-radius: 50%; /* Makes the button perfectly circular */
+    font-size: 30px; /* Adjusts font size for the "+" */
+    display: flex; /* Enables flexbox for centering */
+    align-items: center; /* Centers content vertically */
+    justify-content: center; /* Centers content horizontally */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds a soft shadow */
+    cursor: pointer; /* Shows pointer cursor on hover */
+    z-index: 1000; /* Ensures the button appears above other elements */
+}
+
+.create-thread-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.create-thread-button a {
+    text-decoration: none; /* Removes underline from the link */
+    color: white; /* Keeps the link text white */
+}

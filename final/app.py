@@ -55,6 +55,10 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
+@app.route('/create.html')
+def create_thread():
+    return render_template('create.html')
+
 @app.route('/threads', methods=['GET', 'POST'])
 def threads():
     if 'user_id' not in session:
