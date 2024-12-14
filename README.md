@@ -15,4 +15,5 @@ ER diagram <br/>
 hw3: https://github.com/wei-ting-Hsu/Database/tree/main/noSQL/.vene <br/>
 hw3 youtube: https://youtu.be/yE_hwtbaYok <br/>
 hw4: https://github.com/wei-ting-Hsu/Database/tree/main/final
+hw4 youtube: https://youtu.be/09mb2K6OOBM
 # 專題連結區
