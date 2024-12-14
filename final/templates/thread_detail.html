@@ -57,6 +57,14 @@
     <div class="container">
         <div class="title">{{ thread['title'] }}</div>
         <div class="description">{{ thread['description'] or "No description provided" }}</div>
+
+        <!-- 新增圖片顯示 -->
+        {% if thread['image'] %}
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="/uploads/{{ thread['image'] }}" alt="Thread Image" style="max-width: 400px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            </div>
+        {% endif %}
+
         {% if not thread['closed'] %}
             <form method="POST" class="message-box">
                 <label for="text">Add Message:</label>
@@ -81,9 +89,9 @@
         </ul>
         <div class="button-container">
             <a href="{{ url_for('threads') }}"><button>Back to Threads</button></a>
-            {% if session['username'] == thread['created_by'] and not thread['closed'] %}
-                <form method="POST" action="{{ url_for('close_thread', thread_id=thread['_id']) }}" style="display: inline;">
-                    <button type="submit">Close Thread</button>
+            {% if session['username'] == thread['created_by'] %}
+                <form method="POST" action="{{ url_for('delete_thread', thread_id=thread['_id']) }}" style="display: inline;">
+                    <button type="submit" style="background-color: #00468c; color: white;">Close Thread</button>
                 </form>
             {% endif %}
         </div>

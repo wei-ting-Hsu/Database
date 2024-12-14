@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, session, render_template, redirect, url_for
+from flask import Flask, request, jsonify, session, render_template, redirect, url_for, send_from_directory
 from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson.objectid import ObjectId
@@ -16,6 +16,11 @@ mongo = PyMongo(app)
 UPLOAD_FOLDER = 'uploads/'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Serve uploaded images
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/')
 def home():
@@ -78,7 +83,7 @@ def threads():
         thread = {
             'title': title,
             'description': description,
-            'image': image_path,
+            'image': image.filename if image else None,
             'messages': [],
             'created_by': session['username'],
             'closed': False
@@ -135,6 +140,22 @@ def close_thread(thread_id):
         {'_id': ObjectId(thread_id)},
         {'$set': {'closed': True}}
     )
+    return redirect(url_for('threads'))
+
+@app.route('/threads/<thread_id>/delete', methods=['POST'])
+def delete_thread(thread_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    thread = mongo.db.threads.find_one({'_id': ObjectId(thread_id)})
+
+    if not thread:
+        return 'Thread not found', 404
+
+    if thread['created_by'] != session['username']:
+        return 'You are not authorized to delete this thread', 403
+
+    mongo.db.threads.delete_one({'_id': ObjectId(thread_id)})
     return redirect(url_for('threads'))
 
 @app.route('/threads/<thread_id>/messages/<message_id>', methods=['POST'])
