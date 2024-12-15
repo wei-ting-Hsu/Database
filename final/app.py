@@ -25,7 +25,7 @@ def uploaded_file(filename):
 @app.route('/')
 def home():
     if 'user_id' in session:
-        return render_template('home.html', username=session.get('username'))
+        return render_template('threads.html', username=session.get('username'))
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])

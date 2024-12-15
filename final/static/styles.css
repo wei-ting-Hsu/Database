@@ -182,7 +182,7 @@ button:hover {
     right: 20px; /* Adjusts distance from the right of the viewport */
     width: 60px; /* Sets width to make it circular */
     height: 60px; /* Sets height to make it circular */
-    background-color: #007bff; /* Blue background color */
+    background-color: #a4b7d7; /* Blue background color */
     color: white; /* White text */
     border: none; /* No border */
     border-radius: 50%; /* Makes the button perfectly circular */
@@ -196,10 +196,57 @@ button:hover {
 }
 
 .create-thread-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #6589b1; /* Darker blue on hover */
 }
 
 .create-thread-button a {
     text-decoration: none; /* Removes underline from the link */
     color: white; /* Keeps the link text white */
 }
+.threads-header {
+    background-color: #6589b1; /* 深灰背景 */
+    color: white; /* 文字顏色 */
+    padding: 30px 30px; /* 上下內邊距 */
+    margin-bottom: 20px; /* 與內容分隔 */
+    display: flex;
+    flex-direction: column; /* 垂直佈局 */
+    align-items: center; /* 元素置中 */
+    text-align: center; /* 文字置中 */
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between; /* 左右對齊 */
+    align-items: center; /* 垂直置中 */
+    width: 100%; /* 撐滿父容器 */
+    max-width: 1200px; /* 最大寬度限制 */
+    margin: 0 auto; /* 置中對齊 */
+    position: relative; /* 添加相對定位 */
+}
+.nav-links {
+    display: flex;
+    gap: 20px; /* 連結間距 */
+}
+
+.nav-links a {
+    color: white; /* 連結文字顏色 */
+    text-decoration: none; /* 移除底線 */
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.nav-links a:hover {
+    text-decoration: underline; /* 滑鼠移上時顯示底線 */
+}
+
+h1 {
+    color: white;
+    margin: 0; /* 移除預設的 margin */
+    font-size: 24px;
+    font-weight: bold;
+    position: absolute; /* 絕對定位 */
+    left: 50%; /* 文字左邊界置於 50% */
+    transform: translateX(-50%); /* 使文字真正置中 */
+}
+
+
