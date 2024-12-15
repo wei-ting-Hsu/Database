@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/static/styles.css">
     <title>Threads</title>
     <style>
+        
         .card {
             text-align: center; /* 卡片內內容置中 */
             padding: 20px;
@@ -52,11 +53,16 @@
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <a href="/threads">Home</a>
-        <a href="/logout">Logout</a>
+    <div class="threads-header">
+        <div class="header-container">
+            <div class="nav-links">
+                <a href="/threads">Home</a>
+                <a href="/logout">Logout</a>
+            </div>
+            <h1>All Threads</h1>
+        </div>
     </div>
-    <h1>All Threads</h1>
+    
     {% for thread in threads %}
         <div class="card">
             <h2>{{ thread['title'] }}</h2>

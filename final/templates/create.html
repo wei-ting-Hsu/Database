@@ -7,11 +7,15 @@
     <title>Threads</title>
 </head>
 <body>
-    <div class="navbar">
-        <a href="/threads">Home</a>
-        <a href="/logout">Logout</a>
+    <div class="threads-header">
+        <div class="header-container">
+            <div class="nav-links">
+                <a href="/threads">Home</a>
+                <a href="/logout">Logout</a>
+            </div>
+            <h1>Create a new Threads</h1>
+        </div>
     </div>
-    <h1>Create a New Thread</h1>
     <form action="/threads" method="POST" enctype="multipart/form-data">
         <label for="title">Title:</label>
         <input type="text" name="title" id="title" required>
